@@ -85,5 +85,17 @@ func VerifySignedJWTWithCerts(token string, certs *Certs, requiredAudience strin
 	if now.Unix() > latest {
 		return fmt.Errorf("jwt: token used too late, %d > %d: %s", now.Unix(), latest, token)
 	}
+
+	found := false
+	for _, issuer := range issuers {
+		if issuer == claimSet.Iss {
+			found = true
+			break
+		}
+	}
+	if !found {
+		return fmt.Errorf("Invalid issuer: %s", claimSet.Iss)
+	}
+
 	return nil
 }
