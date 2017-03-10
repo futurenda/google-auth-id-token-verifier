@@ -1,16 +1,18 @@
 package googleAuth
 
 import (
+	"crypto/rsa"
 	"net/http"
 	"time"
 )
 
 type Certs struct {
-	Certs  map[string]string
+	Keys   map[string]*rsa.PublicKey
 	Expiry time.Time
 }
 
 func getFederatedSignonCerts() error {
 	resp, err := http.Get(googleOAuth2FederatedSignonCertsURL)
+	resp.Header.Get("")
 	return nil
 }
