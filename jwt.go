@@ -9,6 +9,8 @@ import (
 
 	"bytes"
 
+	"fmt"
+
 	"golang.org/x/oauth2/jws"
 )
 
@@ -55,9 +57,12 @@ func VerifySignedJWTWithCerts(token string, certs *Certs, requiredAudience strin
 		return err
 	}
 	key := certs.Keys[header.KeyID]
+	if key == nil {
+		return fmt.Errorf("jwt: no pem found for kid: %s, ", header.KeyID)
+	}
 	err = jws.Verify(token, key)
 	if err != nil {
-		return err
+		return fmt.Errorf("jwt: invalid token signature, %s", err.Error())
 	}
 	return nil
 }
