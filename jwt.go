@@ -12,7 +12,7 @@ import (
 	"golang.org/x/oauth2/jws"
 )
 
-func parseJWT(token string) (*jws.Header, *jws.ClaimSet, error) {
+func parseJWT(token string) (*jws.Header, *ClaimSet, error) {
 	s := strings.Split(token, ".")
 	if len(s) != 3 {
 		return nil, nil, errors.New("Invalid token received")
@@ -26,11 +26,26 @@ func parseJWT(token string) (*jws.Header, *jws.ClaimSet, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	claimSet, err := jws.Decode(token)
+	claimSet, err := Decode(token)
 	if err != nil {
 		return nil, nil, err
 	}
 	return header, claimSet, nil
+}
+
+// Decode returns ClaimSet
+func Decode(token string) (*ClaimSet, error) {
+	s := strings.Split(token, ".")
+	if len(s) != 3 {
+		return nil, errors.New("Invalid token received")
+	}
+	decoded, err := base64.RawURLEncoding.DecodeString(s[1])
+	if err != nil {
+		return nil, err
+	}
+	c := &ClaimSet{}
+	err = json.NewDecoder(bytes.NewBuffer(decoded)).Decode(c)
+	return c, err
 }
 
 // VerifySignedJWTWithCerts is golang port of OAuth2Client.prototype.verifySignedJwtWithCerts
