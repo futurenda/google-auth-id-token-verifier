@@ -74,5 +74,16 @@ func VerifySignedJWTWithCerts(token string, certs *Certs, requiredAudience strin
 	if claimSet.Exp > now.Unix()+int64(maxExpiry.Seconds()) {
 		return fmt.Errorf("jwt: expiration time too far in future: %s", token)
 	}
+
+	earliest := claimSet.Iat - int64(ClockSkew.Seconds())
+	latest := claimSet.Iat + int64(ClockSkew.Seconds())
+
+	if now.Unix() < earliest {
+		return fmt.Errorf("jwt: token used too early, %d < %d: %s", now.Unix(), earliest, token)
+	}
+
+	if now.Unix() > latest {
+		return fmt.Errorf("jwt: token used too late, %d > %d: %s", now.Unix(), latest, token)
+	}
 	return nil
 }
