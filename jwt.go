@@ -51,7 +51,7 @@ func Decode(token string) (*ClaimSet, error) {
 }
 
 // VerifySignedJWTWithCerts is golang port of OAuth2Client.prototype.verifySignedJwtWithCerts
-func VerifySignedJWTWithCerts(token string, certs *Certs, requiredAudience string, issuers []string, maxExpiry time.Duration) error {
+func VerifySignedJWTWithCerts(token string, certs *Certs, allowedAuds []string, issuers []string, maxExpiry time.Duration) error {
 	header, claimSet, err := parseJWT(token)
 	if err != nil {
 		return err
@@ -94,7 +94,18 @@ func VerifySignedJWTWithCerts(token string, certs *Certs, requiredAudience strin
 		}
 	}
 	if !found {
-		return fmt.Errorf("Invalid issuer: %s", claimSet.Iss)
+		return fmt.Errorf("Wrong issuer: %s", claimSet.Iss)
+	}
+
+	audFound := false
+	for _, aud := range allowedAuds {
+		if aud == claimSet.Aud {
+			audFound = true
+			break
+		}
+	}
+	if !audFound {
+		return fmt.Errorf("Wrong aud: %s", claimSet.Aud)
 	}
 
 	return nil
