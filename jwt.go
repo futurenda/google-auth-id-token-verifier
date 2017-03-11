@@ -80,7 +80,7 @@ func VerifySignedJWTWithCerts(token string, certs *Certs, allowedAuds []string, 
 	}
 
 	earliest := claimSet.Iat - int64(ClockSkew.Seconds())
-	latest := claimSet.Iat + int64(ClockSkew.Seconds())
+	latest := claimSet.Exp + int64(ClockSkew.Seconds())
 
 	if now.Unix() < earliest {
 		return ErrTokenUsedTooEarly
