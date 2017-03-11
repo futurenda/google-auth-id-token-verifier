@@ -23,3 +23,7 @@ func TestGetFederatedSignonCerts(t *testing.T) {
 		t.Error("9e84f33bf244380eb676d35db27a49f86d7b2235 should exists")
 	}
 }
+
+func TestGetFederatedSignonCertsCache(t *testing.T) {
+	// TODO
+}
