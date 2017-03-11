@@ -18,6 +18,9 @@ type Certs struct {
 
 var (
 	certs *Certs
+
+	// Google Sign on certificates.
+	googleOAuth2FederatedSignonCertsURL = "https://www.googleapis.com/oauth2/v3/certs"
 )
 
 type key struct {
