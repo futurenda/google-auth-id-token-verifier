@@ -1,4 +1,4 @@
-package googleAuth
+package googleAuthIDTokenVerifier
 
 import (
 	"crypto/rsa"

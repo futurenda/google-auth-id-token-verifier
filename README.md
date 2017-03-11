@@ -7,13 +7,18 @@ Verify idtoken based on JWT flow without making http request to tokeninfo API.
 ## Usage
 
 ```go
-v := googleAuth.Verifier{}
+
+import (
+    "github.com/futurenda/google-auth-id-token-verifier"
+)
+
+v := googleAuthIDTokenVerifier.Verifier{}
 aud := "xxxxxx-yyyyyyy.apps.googleusercontent.com"
 err := v.verifyIDToken(TOKEN, []string{
     aud,
 })
 if err == nil {
-    claimSet, err := googleAuth.Decode(TOKEN)
+    claimSet, err := googleAuthIDTokenVerifier.Decode(TOKEN)
     // claimSet.Iss,claimSet.Email ... (See claimset.go)
 }
 ```

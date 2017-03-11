@@ -1,4 +1,4 @@
-package googleAuth
+package googleAuthIDTokenVerifier
 
 import (
 	"golang.org/x/oauth2/jws"
