@@ -2,9 +2,9 @@ package googleAuth
 
 import (
 	"crypto/rsa"
-	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
-	"fmt"
+	"math/big"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -19,6 +19,19 @@ type Certs struct {
 var (
 	certs *Certs
 )
+
+type key struct {
+	Kty string `json:"kty"`
+	Alg string `json:"alg"`
+	Use string `json:"use"`
+	Kid string `json:"Kid"`
+	N   string `json:"n"`
+	E   string `json:"e"`
+}
+
+type response struct {
+	Keys []*key `json:"keys"`
+}
 
 func getFederatedSignonCerts() (*Certs, error) {
 	if certs != nil {
@@ -48,19 +61,31 @@ func getFederatedSignonCerts() (*Certs, error) {
 	}
 
 	keys := map[string]*rsa.PublicKey{}
-	m := map[string]string{}
-	err = json.NewDecoder(resp.Body).Decode(&m)
+	res := &response{}
+	err = json.NewDecoder(resp.Body).Decode(&res)
 	if err != nil {
 		return nil, err
 	}
 
-	for k, v := range m {
-		fmt.Printf("k: %s, v: %s", k, v)
-		key, err := x509.ParsePKIXPublicKey([]byte(v))
-		if err != nil {
-			return nil, err
+	for _, key := range res.Keys {
+		if key.Use == "sig" && key.Alg == "RSA" {
+			n, err := base64.URLEncoding.DecodeString(key.N)
+			if err != nil {
+				return nil, err
+			}
+			e, err := base64.URLEncoding.DecodeString(key.E)
+			if err != nil {
+				return nil, err
+			}
+			ei, err := strconv.ParseInt(string(e), 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			keys[key.Kid] = &rsa.PublicKey{
+				N: big.NewInt(0).SetBytes(n),
+				E: int(ei),
+			}
 		}
-		keys[k] = key.(*rsa.PublicKey)
 	}
 	certs = &Certs{
 		Keys:   keys,

@@ -9,6 +9,7 @@ func TestGetFederatedSignonCerts(t *testing.T) {
 	certs, err := getFederatedSignonCerts()
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
 	cacheAge := certs.Expiry.Sub(time.Now()).Seconds()
