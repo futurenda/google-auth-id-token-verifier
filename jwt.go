@@ -62,7 +62,7 @@ func VerifySignedJWTWithCerts(token string, certs *Certs, allowedAuds []string, 
 	}
 	err = jws.Verify(token, key)
 	if err != nil {
-		return ErrInvalidSignature
+		return ErrWrongSignature
 	}
 	if claimSet.Iat < 1 {
 		return ErrNoIssueTimeInToken

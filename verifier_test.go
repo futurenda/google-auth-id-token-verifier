@@ -20,5 +20,12 @@ func TestParseJWT(t *testing.T) {
 
 func TestVerifier(t *testing.T) {
 	v := Verifier{}
-	v.verifyIDToken(validTestToken)
+	err := v.verifyIDToken(wrongSigToken, []string{})
+	if err != ErrWrongSignature {
+		t.Error("Expect ErrWrongSignature")
+	}
+	err = v.verifyIDToken(validTestToken, []string{})
+	if err != ErrTokenUsedTooLate {
+		t.Error("Expect ErrTokenUsedTooLate")
+	}
 }

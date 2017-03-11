@@ -7,7 +7,7 @@ var (
 
 	ErrPublicKeyNotFound = errors.New("No public key found for given kid")
 
-	ErrInvalidSignature = errors.New("Invalid token signature")
+	ErrWrongSignature = errors.New("Wrong token signature")
 
 	ErrNoIssueTimeInToken = errors.New("No issue time in token")
 
