@@ -18,7 +18,7 @@ var (
 
 type Verifier struct{}
 
-func (v *Verifier) verifyIDToken(idToken string, audience []string) error {
+func (v *Verifier) VerifyIDToken(idToken string, audience []string) error {
 	certs, err := getFederatedSignonCerts()
 	if err != nil {
 		return err

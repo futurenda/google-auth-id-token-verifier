@@ -14,7 +14,7 @@ import (
 
 v := googleAuthIDTokenVerifier.Verifier{}
 aud := "xxxxxx-yyyyyyy.apps.googleusercontent.com"
-err := v.verifyIDToken(TOKEN, []string{
+err := v.VerifyIDToken(TOKEN, []string{
     aud,
 })
 if err == nil {
