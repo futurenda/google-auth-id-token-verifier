@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: golang:1.8
+    working_directory: /go/src/github.com/futurenda/google-auth-verify-id-token
+    steps:
+      - checkout
+
+      - run:
+          command: |
+            set -eu
+            go get -t -d -v ./...
+            go test -v -race ./...
