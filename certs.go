@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -45,15 +46,17 @@ func getFederatedSignonCerts() (*Certs, error) {
 			}
 		}
 	}
+
 	keys := map[string]*rsa.PublicKey{}
-	m := map[string][]byte{}
+	m := map[string]string{}
 	err = json.NewDecoder(resp.Body).Decode(&m)
 	if err != nil {
 		return nil, err
 	}
 
 	for k, v := range m {
-		key, err := x509.ParsePKIXPublicKey(v)
+		fmt.Printf("k: %s, v: %s", k, v)
+		key, err := x509.ParsePKIXPublicKey([]byte(v))
 		if err != nil {
 			return nil, err
 		}
