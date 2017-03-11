@@ -14,6 +14,10 @@ import (
 	"golang.org/x/oauth2/jws"
 )
 
+var (
+	nowFn = time.Now
+)
+
 func parseJWT(token string) (*jws.Header, *ClaimSet, error) {
 	s := strings.Split(token, ".")
 	if len(s) != 3 {
@@ -70,7 +74,7 @@ func VerifySignedJWTWithCerts(token string, certs *Certs, allowedAuds []string, 
 	if claimSet.Exp < 1 {
 		return ErrNoExpirationTimeInToken
 	}
-	now := time.Now()
+	now := nowFn()
 	if claimSet.Exp > now.Unix()+int64(maxExpiry.Seconds()) {
 		return ErrExpirationTimeTooFarInFuture
 	}
