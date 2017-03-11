@@ -44,6 +44,8 @@ func TestVerifier(t *testing.T) {
 		t.Error("Expect wrong aud error")
 	}
 
+	t.Log(claimSet.Aud)
+
 	err = v.verifyIDToken(validTestToken, []string{
 		claimSet.Aud,
 	})
