@@ -25,5 +25,16 @@ func TestGetFederatedSignonCerts(t *testing.T) {
 }
 
 func TestGetFederatedSignonCertsCache(t *testing.T) {
-	// TODO
+	certs = &Certs{
+		Expiry: time.Now(),
+	}
+	certs, err := getFederatedSignonCerts() // trigger update
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	key := certs.Keys["9e84f33bf244380eb676d35db27a49f86d7b2235"]
+	if key == nil {
+		t.Error("9e84f33bf244380eb676d35db27a49f86d7b2235 should exists")
+	}
 }
