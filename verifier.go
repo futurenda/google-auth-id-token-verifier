@@ -16,4 +16,12 @@ var (
 	}
 )
 
-type Validator struct{}
+type Verifier struct{}
+
+func (v *Verifier) verifyIDToken(idToken string, audience []string) error {
+	certs, err := getFederatedSignonCerts()
+	if err != nil {
+		return err
+	}
+	return VerifySignedJWTWithCerts(idToken, certs, audience, Issuers, MaxTokenLifetime)
+}
