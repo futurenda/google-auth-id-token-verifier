@@ -44,5 +44,12 @@ func TestVerifier(t *testing.T) {
 		t.Error("Expect wrong aud error")
 	}
 
+	err = v.verifyIDToken(validTestToken, []string{
+		claimSet.Aud,
+	})
+	if err != nil {
+		t.Error(err)
+	}
+
 	nowFn = time.Now
 }
