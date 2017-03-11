@@ -18,3 +18,5 @@ var (
 		"https://accounts.google.com",
 	}
 )
+
+type Validator struct{}
