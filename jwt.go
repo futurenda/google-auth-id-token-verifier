@@ -39,7 +39,7 @@ func parseJWT(token string) (*jws.Header, *ClaimSet, error) {
 func Decode(token string) (*ClaimSet, error) {
 	s := strings.Split(token, ".")
 	if len(s) != 3 {
-		return nil, errors.New("Invalid token received")
+		return nil, ErrInvalidToken
 	}
 	decoded, err := base64.RawURLEncoding.DecodeString(s[1])
 	if err != nil {
@@ -58,32 +58,32 @@ func VerifySignedJWTWithCerts(token string, certs *Certs, allowedAuds []string, 
 	}
 	key := certs.Keys[header.KeyID]
 	if key == nil {
-		return fmt.Errorf("jwt: no pem found for kid: %s, ", header.KeyID)
+		return ErrPublicKeyNotFound
 	}
 	err = jws.Verify(token, key)
 	if err != nil {
-		return fmt.Errorf("jwt: invalid token signature, %s", err.Error())
+		return ErrInvalidSignature
 	}
 	if claimSet.Iat < 1 {
-		return fmt.Errorf("jwt: no issue time in token: %s", token)
+		return ErrNoIssueTimeInToken
 	}
 	if claimSet.Exp < 1 {
-		return fmt.Errorf("jwt: no expiration time in token: %s", token)
+		return ErrNoExpirationTimeInToken
 	}
 	now := time.Now()
 	if claimSet.Exp > now.Unix()+int64(maxExpiry.Seconds()) {
-		return fmt.Errorf("jwt: expiration time too far in future: %s", token)
+		return ErrExpirationTimeTooFarInFuture
 	}
 
 	earliest := claimSet.Iat - int64(ClockSkew.Seconds())
 	latest := claimSet.Iat + int64(ClockSkew.Seconds())
 
 	if now.Unix() < earliest {
-		return fmt.Errorf("jwt: token used too early, %d < %d: %s", now.Unix(), earliest, token)
+		return ErrTokenUsedTooEarly
 	}
 
 	if now.Unix() > latest {
-		return fmt.Errorf("jwt: token used too late, %d > %d: %s", now.Unix(), latest, token)
+		return ErrTokenUsedTooLate
 	}
 
 	found := false
