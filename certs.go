@@ -60,24 +60,24 @@ func getFederatedSignonCerts() (*Certs, error) {
 		}
 	}
 
-	keys := map[string]*rsa.PublicKey{}
 	res := &response{}
 	err = json.NewDecoder(resp.Body).Decode(&res)
 	if err != nil {
 		return nil, err
 	}
 
+	keys := map[string]*rsa.PublicKey{}
 	for _, key := range res.Keys {
-		if key.Use == "sig" && key.Alg == "RSA" {
-			n, err := base64.URLEncoding.DecodeString(key.N)
+		if key.Use == "sig" && key.Kty == "RSA" {
+			n, err := base64.RawURLEncoding.DecodeString(key.N)
 			if err != nil {
 				return nil, err
 			}
-			e, err := base64.URLEncoding.DecodeString(key.E)
+			e, err := base64.RawURLEncoding.DecodeString(key.E)
 			if err != nil {
 				return nil, err
 			}
-			ei, err := strconv.ParseInt(string(e), 10, 64)
+			ei := big.NewInt(0).SetBytes(e).Int64()
 			if err != nil {
 				return nil, err
 			}
@@ -92,5 +92,5 @@ func getFederatedSignonCerts() (*Certs, error) {
 		Expiry: time.Now().Add(time.Second * time.Duration(cacheAge)),
 	}
 
-	return nil, nil
+	return certs, nil
 }
