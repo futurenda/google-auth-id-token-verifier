@@ -13,4 +13,5 @@ type ClaimSet struct {
 	GivenName     string `json:"given_name"`
 	FamilyName    string `json:"family_name"`
 	Locale        string `json:"locale"`
+	Subject       string `json:"sub"`
 }
