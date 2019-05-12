@@ -1,6 +1,9 @@
 package googleAuthIDTokenVerifier
 
-import "time"
+import (
+	"time"
+	"net/http"
+)
 
 var (
 	// MaxTokenLifetime is one day
@@ -19,7 +22,15 @@ var (
 type Verifier struct{}
 
 func (v *Verifier) VerifyIDToken(idToken string, audience []string) error {
-	certs, err := getFederatedSignonCerts()
+	certs, err := getFederatedSignonCerts(nil)
+	if err != nil {
+		return err
+	}
+	return VerifySignedJWTWithCerts(idToken, certs, audience, Issuers, MaxTokenLifetime)
+}
+
+func (v *Verifier) VerifyIDTokenWithCustomHttpClient(httpClient *http.Client, idToken string, audience []string) error {
+	certs, err := getFederatedSignonCerts(&ClientOptions{client: httpClient})
 	if err != nil {
 		return err
 	}

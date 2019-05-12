@@ -16,6 +16,10 @@ type Certs struct {
 	Expiry time.Time
 }
 
+type ClientOptions struct {
+	client *http.Client
+}
+
 var (
 	certs *Certs
 
@@ -36,13 +40,20 @@ type response struct {
 	Keys []*key `json:"keys"`
 }
 
-func getFederatedSignonCerts() (*Certs, error) {
+func getFederatedSignonCerts(clientOptions *ClientOptions) (*Certs, error) {
 	if certs != nil {
 		if time.Now().Before(certs.Expiry) {
 			return certs, nil
 		}
 	}
-	resp, err := http.Get(googleOAuth2FederatedSignonCertsURL)
+	var resp *http.Response
+	var err error
+
+	if clientOptions != nil && clientOptions.client != nil{
+		resp, err = clientOptions.client.Get(googleOAuth2FederatedSignonCertsURL)
+	} else {
+		resp, err = http.Get(googleOAuth2FederatedSignonCertsURL)
+	}
 	if err != nil {
 		return nil, err
 	}
