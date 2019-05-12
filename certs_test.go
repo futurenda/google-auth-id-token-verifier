@@ -6,7 +6,7 @@ import (
 )
 
 func TestGetFederatedSignonCerts(t *testing.T) {
-	certs, err := getFederatedSignonCerts()
+	certs, err := getFederatedSignonCerts(nil)
 	if err != nil {
 		t.Error(err)
 		return
@@ -28,7 +28,7 @@ func TestGetFederatedSignonCertsCache(t *testing.T) {
 	certs = &Certs{
 		Expiry: time.Now(),
 	}
-	certs, err := getFederatedSignonCerts() // trigger update
+	certs, err := getFederatedSignonCerts(nil) // trigger update
 	if err != nil {
 		t.Error(err)
 		return
