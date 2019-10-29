@@ -13,4 +13,6 @@ type ClaimSet struct {
 	GivenName     string `json:"given_name"`
 	FamilyName    string `json:"family_name"`
 	Locale        string `json:"locale"`
+	// Hd is the hosted domain, present if the user is in a Gsuite domain.
+	Hd  string `json:"hd,omitempty"`
 }
